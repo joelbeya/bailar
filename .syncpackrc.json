@@ -1,0 +1,30 @@
+{
+  "dependencyTypes": ["dev", "peer", "prod"],
+  "filter": ".",
+  "indent": "  ",
+  "semverGroups": [
+    {
+      "dependencies": ["**"],
+      "packages": ["**"],
+      "range": ""
+    }
+  ],
+  "semverRange": "",
+  "sortAz": [
+    "contributors",
+    "dependencies",
+    "peerDependencies",
+    "devDependencies",
+    "keywords",
+    "scripts"
+  ],
+  "sortFirst": ["name", "description", "version", "author"],
+  "source": ["package.json", "packages/*/package.json"],
+  "versionGroups": [
+    {
+      "dependencies": ["**"],
+      "packages": ["**"],
+      "pinVersion": "patch"
+    }
+  ]
+}

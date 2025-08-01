@@ -1,0 +1,106 @@
+# Monorepo Setup & Validation
+
+## Notes
+- Les dépendances de développement (ESLint, Prettier, TypeScript, Turbo, Syncpack, Zod) sont installées à la racine du monorepo avec le flag -w.
+- La configuration ESLint générée par Turborepo est conservée car elle est adaptée au monorepo et bien structurée.
+- Un package de validation a été créé dans `packages/validation` avec Zod et les schémas d'authentification.
+- Syncpack est configuré pour harmoniser les versions des dépendances dans tous les packages et des scripts utiles ont été ajoutés au package.json racine.
+- Les dépendances sont maintenant synchronisées dans tout le monorepo.
+- L'application Next.js dans `apps/web` est fonctionnelle et bien configurée.
+- L'application API (NestJS) a été créée dans `apps/api` et nettoyée de son dépôt Git local, elle est désormais suivie par le dépôt principal.
+- L'intégration de l'API NestJS au monorepo a été optimisée : utilisation des dépendances partagées (`@bailar/validation`, config ESLint et TypeScript commune), configuration des paths dans `tsconfig.json`.
+- Le dossier `apps/docs` a été supprimé du monorepo suite à la décision utilisateur.
+- Analyse : `apps/docs` est bien une app Next.js de documentation, non référencée ailleurs que dans le workspace.
+- Aucune dépendance, configuration ou package partagé ne référence explicitement `apps/docs`.
+- Problème bloquant : la persistance du champ "patch" pour eslint dans le package UI empêche l'installation correcte des dépendances.
+- Problème bloquant : la persistance du champ "patch" pour eslint et d'autres dépendances dans le package.json racine empêche l'installation correcte des dépendances.
+- Problème bloquant : la persistance du champ "patch" pour zod et les dépendances typescript dans le package de validation empêchait l'installation, corrigé.
+- Problème de compatibilité : eslint@9.x installé alors que @typescript-eslint@7.x/8.x requiert eslint@^8.56.0, ce qui génère des avertissements de peer dependencies.
+- Problème bloquant : la version ^8.56.0 de @typescript-eslint/parser n'existe pas (dernière stable : 8.38.0), ce qui empêche l'installation.
+- Problème de compatibilité entre eslint et @typescript-eslint résolu (eslint@8.56.0 et @typescript-eslint@8.38.0 installés).
+- Tous les fichiers package.json principaux (racine, UI, validation) sont désormais sans "patch" et compatibles avec les dépendances installées.
+- Problème résiduel : la vérification des types échoue car Turbo/lockfile référence encore `apps/docs` (supprimé).
+- Toutes les références à `apps/docs` dans le lockfile et les configs ont été nettoyées.
+- Problème de configuration : le package de validation n'a pas de fichier de configuration ESLint, ce qui empêche le lint de fonctionner.
+- Problème bloquant : incompatibilité entre les versions d'ESLint et des plugins TypeScript dans le package de validation (erreur sur @typescript-eslint/no-unused-expressions).
+- Les dépendances ESLint nécessaires ont été ajoutées dans le package de validation et la configuration a été simplifiée pour éviter les conflits de versions.
+- Problème bloquant : incompatibilité entre les versions d'ESLint et des plugins TypeScript dans le package UI (erreur sur @typescript-eslint/no-unused-expressions).
+- Les dépendances `globals` et `typescript-eslint` ont été ajoutées dans le package UI pour résoudre l'erreur de module manquant lors du lint.
+- Le lint passe sur tous les packages sauf une erreur sur un fichier de test e2e dans l'API (problème d'inclusion dans tsconfig ou allowDefaultProject).
+- Problème détecté : le fichier de test e2e `test/app.e2e-spec.ts` n'est pas inclus dans la configuration TypeScript de l'API, ce qui génère une erreur lors du lint.
+- Le dossier `test` est maintenant inclus dans le champ `include` du tsconfig de l'API, le lint détecte désormais des erreurs de typage sur ce fichier (problèmes de typage dans le test e2e).
+- Les problèmes de typage dans le test e2e de l'API ont été corrigés (usage correct de supertest, typage de la réponse, fermeture de l'app après chaque test).
+- Il reste à corriger l'avertissement de promesse non gérée dans le fichier main.ts de l'API.
+- L'avertissement de promesse non gérée dans main.ts (API) a été corrigé (gestion explicite de l'erreur lors du bootstrap).
+- Des erreurs de typage persistent dans le test e2e de l'API (problèmes avec l'utilisation de supertest et le typage de la réponse, malgré la tentative de typage explicite du serveur HTTP).
+- Une dernière erreur de lint subsiste : la raison du rejet de la Promise dans le test e2e doit être une instance d'Error (règle @typescript-eslint/prefer-promise-reject-errors).
+- Malgré la correction (utilisation d'une instance d'Error dans le reject), l'erreur de lint persiste dans le test e2e de l'API.
+- Tous les problèmes de lint sont désormais résolus, le monorepo est stable et toutes les configurations sont correctes.
+- Nouveau problème bloquant : l'exécution des tests dans l'API échoue car le fichier `@bailar/typescript-config/base.json` est manquant (erreur TS6053 avec Jest).
+- Le fichier `base.json` existe bien dans `packages/typescript-config`, le problème est probablement lié à la résolution du chemin d'alias ou à la configuration Jest/TypeScript (et non à l'absence du fichier).
+- Vérification : la configuration Jest de l'API est bien présente dans le package.json, mais la résolution des chemins d'alias TypeScript (extends) ne fonctionne pas avec Jest/ts-jest.
+- Un fichier de configuration Jest personnalisé (`jest.config.js`) a été créé dans l'API, mais le problème de résolution de l'extends TypeScript du monorepo persiste avec Jest/ts-jest.
+- La configuration des tests de l'API fonctionne désormais correctement grâce à l'utilisation d'un chemin relatif vers le fichier `base.json` dans le `tsconfig.json` (au lieu d'un alias de monorepo).
+- Un audit de sécurité a détecté une vulnérabilité faible sur `@eslint/plugin-kit` (<0.3.4) via `eslint@9.31.0` dans l'app web, nécessitant la mise à jour d'ESLint.
+- La vulnérabilité de sécurité sur ESLint dans l'app web a été corrigée (mise à jour vers eslint@9.32.0, plus aucune vulnérabilité détectée).
+- La CI/CD est bien en place (workflow GitHub Actions détecté, vérifié et prêt à l'emploi).
+- La CI/CD a été vérifiée et configurée correctement.
+- Un conflit de fusion/rebase est en cours dans `.github/workflows/ci.yml`, nécessitant une résolution manuelle et la finalisation du rebase avant de pouvoir pousser sur le dépôt distant.
+- La finalisation du rebase échoue car l'éditeur n'est pas disponible en mode non interactif : il faut fournir le message de commit via l'option `-m` ou `-F` pour terminer le rebase en ligne de commande.
+- Le rebase a été annulé pour sortir de l'impasse liée à l'éditeur non interactif. Une nouvelle tentative de synchronisation (rebase ou merge) est nécessaire.
+- La tentative de fusion (merge) a échoué car les historiques locaux et distants n'ont pas de relation commune ("refus de fusionner des historiques sans relation"). Il faut utiliser l'option --allow-unrelated-histories ou réinitialiser l'un des historiques.
+- La fusion forcée avec --allow-unrelated-histories a généré plusieurs conflits de type "ajout/ajout" sur les fichiers clés du monorepo (ci.yml, .gitignore, package.json, pnpm-lock.yaml, etc.).
+- Le conflit dans `.github/workflows/ci.yml` a été résolu, il reste à traiter les autres fichiers en conflit avant de finaliser la fusion et le push.
+- Le conflit dans `.gitignore` a été résolu en fusionnant les deux versions pour conserver toutes les entrées utiles. Il reste à traiter les autres conflits (package.json, pnpm-lock.yaml, etc.)
+- Le conflit dans `package.json` a été résolu en fusionnant les dépendances de développement et les scripts utiles des deux versions. Il reste à traiter le conflit dans `pnpm-lock.yaml` et les autres fichiers listés.
+- Il reste à traiter les conflits dans les fichiers restants (pnpm-lock.yaml, etc.) pour finaliser la fusion et le push.
+- Un conflit non résolu subsiste dans `apps/web/package.json` (marqueurs <<<<<<< HEAD), ce qui empêche la régénération du lockfile et le bon fonctionnement de pnpm install.
+- Le conflit dans `apps/web/package.json` a été résolu en choisissant la version la plus récente d'ESLint (9.32.0) et en supprimant les marqueurs de conflit. Le lockfile peut maintenant être régénéré.
+- Le dépôt actuel est une copie créée pour remplacer un dépôt original défaillant dans `~/Work/bailar`, ce qui explique les problèmes de Git et de synchronisation rencontrés.
+- Les fichiers du monorepo ont été transférés avec succès vers `~/Work/bailar` (hors `.git` et `node_modules`).
+- Le dossier `apps/docs` est déjà absent dans la nouvelle copie du monorepo dans `~/Work/bailar` : aucune suppression supplémentaire nécessaire.
+
+## Task List
+- [x] Installer les dépendances de dev à la racine
+- [x] Vérifier et conserver la config ESLint générée par Turborepo
+- [x] Installer et configurer Zod dans un package de validation
+- [x] Créer les schémas d'authentification avec Zod
+- [x] Configurer Syncpack et harmoniser les dépendances
+- [x] Vérifier la cohérence des dépendances dans tout le monorepo
+- [x] Vérifier la présence et la configuration de l'app Next.js (web)
+- [x] Vérifier ou créer l'application API (NestJS) dans `apps/api`
+- [x] Optimiser l'intégration de l'API NestJS avec les dépendances partagées et la configuration TypeScript commune
+- [x] Corriger la gestion des versions "patch" dans le package eslint-config pour permettre l'installation
+- [x] Corriger la gestion des versions "patch" dans le package UI pour permettre l'installation
+- [x] Corriger la gestion des versions "patch" dans le package.json racine pour permettre l'installation
+- [x] Corriger la gestion des versions "patch" dans le package de validation pour permettre l'installation
+- [x] Résoudre les incompatibilités de peer dependencies entre eslint et @typescript-eslint (utiliser la dernière version stable compatible, ex : eslint@8.56.0 et @typescript-eslint@8.38.0)
+- [x] Supprimer ou renommer le dossier `apps/docs` si besoin d'un dossier `api`
+  - [x] Décider (supprimer, renommer ou conserver) l'app de documentation
+- [x] Nettoyer les références résiduelles à `apps/docs` dans Turbo, lockfile ou autres configs
+- [x] Ajouter une configuration ESLint dans le package de validation pour permettre le lint
+- [x] Résoudre le problème de compatibilité ESLint/@typescript-eslint dans le package de validation
+- [x] Résoudre le problème de compatibilité ESLint/@typescript-eslint dans le package UI
+- [x] Corriger l'inclusion du fichier de test e2e dans la config de l'API (tsconfig ou allowDefaultProject)
+  - [x] Ajouter le dossier `test` dans le champ `include` du tsconfig de l'API
+- [x] Corriger les problèmes de typage dans le test e2e de l'API
+- [x] Corriger l'avertissement de promesse non gérée dans main.ts (API)
+- [x] Corriger les erreurs de typage persistantes dans le test e2e de l'API (supertest)
+- [x] Corriger l'erreur de lint : utiliser une instance d'Error dans le reject de la Promise du test e2e (API) (problème persistant)
+- [x] Corriger le problème de configuration des tests : fichier `@bailar/typescript-config/base.json` manquant pour Jest dans l'API
+- [x] Investiguer et corriger la résolution du chemin d'alias TypeScript/Jest dans l'API
+  - [x] Créer un fichier de configuration Jest personnalisé (jest.config.js) dans l'API
+  - [x] Adapter la config Jest ou ts-jest pour supporter l'extends monorepo
+- [x] Mettre à jour eslint dans l'app web pour corriger la vulnérabilité de sécurité
+- [x] Vérifier la présence et la configuration de la CI/CD (GitHub Actions)
+- [ ] Résoudre le conflit de fusion/rebase dans `.github/workflows/ci.yml` et finaliser le push Git
+  - [ ] Relancer le rebase ou effectuer un merge propre pour synchroniser avec le dépôt distant
+  - [ ] Résoudre le problème d'historiques sans relation lors du merge (utiliser --allow-unrelated-histories si nécessaire ou choisir une stratégie de résolution)
+  - [ ] Résoudre tous les conflits de fusion (ajout/ajout) dans les fichiers listés (ci.yml, .gitignore, package.json, pnpm-lock.yaml, etc.)
+  - [x] Résoudre le conflit dans `apps/web/package.json` pour permettre la régénération du lockfile
+  - [ ] Résoudre le conflit dans `pnpm-lock.yaml` et autres fichiers restants
+  - [ ] Finaliser la fusion et pousser sur le dépôt distant
+- [x] Transférer tous les fichiers du monorepo vers le nouveau dossier de travail (`~/Work/bailar`) hors `.git` et `node_modules`
+
+## Current Goal
+Monorepo stable : toutes les configurations, lints et tests sont corrigés

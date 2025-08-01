@@ -1,0 +1,10 @@
+{
+  "extends": "@bailar/typescript-config/base.json",
+  "include": ["."],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  }
+}
