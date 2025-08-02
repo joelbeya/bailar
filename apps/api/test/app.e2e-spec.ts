@@ -1,56 +1,62 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
+import * as http from 'http';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let server: http.Server;
+  let moduleFixture: TestingModule;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    
+    // Démarrer le serveur sur un port aléatoire
+    server = app.getHttpServer();
+    await app.listen(0);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
-  it('/ (GET)', async () => {
-    // Utilisation de l'API HTTP native de Node.js avec une approche plus simple
-    const http = await import('http');
+  it('/ (GET)', () => {
+    const address = server.address();
+    if (!address || typeof address === 'string') {
+      throw new Error('Could not get server address');
+    }
+    
+    const port = typeof address === 'string' ? 3000 : address.port;
 
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
       const req = http.request(
         {
           hostname: 'localhost',
-          port: 3000,
+          port,
           path: '/',
           method: 'GET',
         },
         (res) => {
-          // Vérification du code de statut
           expect(res.statusCode).toBe(200);
 
-          // Lecture de la réponse
           const chunks: Buffer[] = [];
-          res.on('data', (chunk) => chunks.push(chunk));
+          res.on('data', (chunk: Buffer) => chunks.push(chunk));
 
           res.on('end', () => {
             const data = Buffer.concat(chunks).toString();
             expect(data).toBe('Hello World!');
             resolve();
           });
-        },
+        }
       );
 
-      // Gestion simplifiée des erreurs
-      req.on('error', () => {
-        // En cas d'erreur, le test échouera avec le timeout
-        // C'est acceptable pour un test simple
-        console.error('Erreur lors de la requête de test');
+      req.on('error', (error: Error) => {
+        reject(error);
       });
 
       req.end();
