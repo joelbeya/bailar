@@ -27,7 +27,7 @@ export default tseslint.config(
   },
   // Configuration pour les fichiers de test (règles plus permissives)
   {
-    files: ['test/**/*.ts'],
+    files: ['test/**/*.ts', 'src/**/*.spec.ts'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -48,6 +48,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
   // Configuration globale

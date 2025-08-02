@@ -1,35 +1,61 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+// Création d'un mock typé pour AppService
+const createMockAppService = (): jest.Mocked<AppService> => ({
+  // Utilisation d'une fonction fléchée pour éviter les problèmes de liaison de 'this'
+  getHello: jest.fn().mockImplementation((): string => 'Hello World!'),
+});
 
 describe('AppController', () => {
   let appController: AppController;
   let moduleFixture: TestingModule;
+  let mockAppService: jest.Mocked<AppService>;
 
   beforeEach(async () => {
-    moduleFixture = await Test.createTestingModule({
+    // Initialisation du mock
+    mockAppService = createMockAppService();
+
+    // Configuration du module de test avec typage explicite
+    const testModuleBuilder = Test.createTestingModule({
       controllers: [AppController],
       providers: [
         {
           provide: AppService,
-          useValue: {
-            getHello: jest.fn().mockReturnValue('Hello World!'),
-          },
+          useValue: mockAppService,
         },
       ],
-    }).compile();
+    });
 
-    appController = moduleFixture.get<AppController>(AppController);
+    // Compilation du module
+    const testModule = await testModuleBuilder.compile();
+
+    // Initialisation des références
+    moduleFixture = testModule;
+
+    // Utilisation d'une fonction fléchée pour éviter les problèmes de liaison de 'this'
+    const getAppController = () => testModule.get<AppController>(AppController);
+    appController = getAppController();
   });
 
   afterEach(async () => {
-    await moduleFixture.close();
+    if (moduleFixture) {
+      await moduleFixture.close();
+    }
   });
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
+      // Given
+      const expected = 'Hello World!';
+
+      // When
       const result = appController.getHello();
-      expect(result).toBe('Hello World!');
+
+      // Then
+      expect(result).toBe(expected);
+      expect(mockAppService.getHello).toHaveBeenCalled();
     });
   });
 });
