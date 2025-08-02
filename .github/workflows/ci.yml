@@ -2,46 +2,32 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Run Python tests
-        run: |
-          # Add your test command here, for example:
-          # python -m pytest
-
-      - name: Set up Node.js
+      - name: Setup Node.js and pnpm
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm i -g pnpm
+      - name: Install pnpm globally
+        run: corepack enable && corepack prepare pnpm@latest --activate
 
-      - name: Install Node.js dependencies
+      - name: Install dependencies
         run: pnpm install
 
-      - name: Lint code
-        run: pnpm run lint --if-present
+      - name: Lint all apps and packages
+        run: pnpm turbo run lint
 
-      - name: Build packages
-        run: pnpm run build --if-present
+      - name: Build all apps and packages
+        run: pnpm turbo run build
