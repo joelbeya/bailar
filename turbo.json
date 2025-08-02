@@ -1,9 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
-  "telemetry": {
-    "enabled": false
-  },
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
