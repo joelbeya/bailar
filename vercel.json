@@ -2,17 +2,5 @@
   "version": 2,
   "buildCommand": "cd ../.. && pnpm install --no-frozen-lockfile && pnpm run build --filter web",
   "installCommand": "cd ../.. && pnpm install --no-frozen-lockfile",
-  "outputDirectory": "apps/web/.next",
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/apps/web/$1"
-    }
-  ]
+  "outputDirectory": "apps/web/.next"
 }

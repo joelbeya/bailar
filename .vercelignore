@@ -1,11 +1,11 @@
-# Ignorer tout sauf l'application web
-**
-!apps/web/**
-!packages/ui/**
+# Fichiers à inclure explicitement
+!turbo.json
 !package.json
 !pnpm-lock.yaml
 !pnpm-workspace.yaml
 !vercel.json
+!apps/web/**/*
+!packages/ui/**/*
 
 # Ignorer les dossiers de build et de cache
 **/node_modules
