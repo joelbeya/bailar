@@ -1,0 +1,25 @@
+# Ignorer tout sauf l'application web
+**
+!apps/web/**
+!packages/ui/**
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!vercel.json
+
+# Ignorer les dossiers de build et de cache
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+**/.vercel
+**/.git
+
+# Fichiers de configuration inutiles pour le déploiement
+**/*.md
+**/*.test.*
+**/*.spec.*
+**/tsconfig*.json
+**/eslint.config.*
+**/jest.config.*
