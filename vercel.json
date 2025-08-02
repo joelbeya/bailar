@@ -1,6 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "cd ../.. && pnpm install --no-frozen-lockfile && cd apps/web && pnpm run build",
-  "installCommand": "cd ../.. && pnpm install --no-frozen-lockfile",
-  "outputDirectory": "apps/web/.next"
+  "buildCommand": "cd apps/web && pnpm install --no-frozen-lockfile && pnpm run build",
+  "installCommand": "cd apps/web && pnpm install --no-frozen-lockfile",
+  "outputDirectory": "apps/web/.next",
+  "workspaces": [
+    "packages/*"
+  ],
+  "regions": ["cdg1"],
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
+    }
+  ]
 }
