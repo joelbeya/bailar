@@ -1,13 +1,6 @@
 {
-  "extends": "../../packages/typescript-config/base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "ES2022",
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {

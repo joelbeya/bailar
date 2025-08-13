@@ -41,9 +41,6 @@ importers:
 
   apps/api:
     dependencies:
-      '@bailar/validation':
-        specifier: workspace:*
-        version: link:../../packages/validation
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.5(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -62,16 +59,13 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
     devDependencies:
       '@nestjs/cli':
         specifier: ^11.0.10
         version: 11.0.10(@types/node@22.15.3)
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.3
@@ -79,7 +73,7 @@ importers:
         specifier: ^30.0.0
         version: 30.0.0
       '@types/node':
-        specifier: ^22.10.7
+        specifier: ^22.15.3
         version: 22.15.3
       '@types/supertest':
         specifier: ^6.0.2
