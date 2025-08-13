@@ -45,6 +45,23 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3"
   },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "plugins": ["@typescript-eslint"],
+    "root": true,
+    "rules": {
+      "@typescript-eslint/no-unused-vars": ["error"],
+      "@typescript-eslint/no-explicit-any": "off"
+    }
+  },
   "jest": {
     "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
