@@ -46,3 +46,15 @@ jobs:
 
       - name: Build all apps and packages
         run: pnpm turbo run build
+
+      - name: Deploy to Render
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/')
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Triggering Render deployment..."
+            curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret not set. Skipping deployment."
+          fi
