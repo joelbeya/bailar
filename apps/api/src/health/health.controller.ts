@@ -2,20 +2,22 @@ import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheck,
   HealthCheckService,
-  HttpHealthIndicator,
+  HealthCheckResult,
 } from '@nestjs/terminus';
 
 @Controller('api/health')
 export class HealthController {
-  constructor(
-    private health: HealthCheckService,
-    private http: HttpHealthIndicator,
-  ) {}
+  constructor(private health: HealthCheckService) {}
 
-  @Get() @HealthCheck() check() {
+  @Get()
+  @HealthCheck()
+  check(): Promise<HealthCheckResult> {
     return this.health.check([
       () => ({
-        status: { status: 'up', timestamp: new Date().toISOString() },
+        api: {
+          status: 'up',
+          timestamp: new Date().toISOString(),
+        },
       }),
     ]);
   }
