@@ -1,6 +1,7 @@
 # Monorepo Setup & Validation
 
 ## Notes
+
 - Les dépendances de développement (ESLint, Prettier, TypeScript, Turbo, Syncpack, Zod) sont installées à la racine du monorepo avec le flag -w.
 - La configuration ESLint générée par Turborepo est conservée car elle est adaptée au monorepo et bien structurée.
 - Un package de validation a été créé dans `packages/validation` avec Zod et les schémas d'authentification.
@@ -61,6 +62,7 @@
 - Le dossier `apps/docs` est déjà absent dans la nouvelle copie du monorepo dans `~/Work/bailar` : aucune suppression supplémentaire nécessaire.
 
 ## Task List
+
 - [x] Installer les dépendances de dev à la racine
 - [x] Vérifier et conserver la config ESLint générée par Turborepo
 - [x] Installer et configurer Zod dans un package de validation
@@ -103,4 +105,5 @@
 - [x] Transférer tous les fichiers du monorepo vers le nouveau dossier de travail (`~/Work/bailar`) hors `.git` et `node_modules`
 
 ## Current Goal
+
 Monorepo stable : toutes les configurations, lints et tests sont corrigés
