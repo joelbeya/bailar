@@ -48,4 +48,4 @@ COPY --from=builder /app/apps/api/package.json ./
 EXPOSE $PORT
 
 # Start the application
-CMD ["node", "dist/main"]
+CMD ["node", "dist/apps/api/main.js"]
